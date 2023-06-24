@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>SVG on Image example</title>
+        <script type="text/javascript" src="JSON/JSON_Annotation_Observation.js"></script>
+        <script type="text/javascript" src="JSON/JSON_Bundle_Observation_Annotation"></script>
+        <script type="text/javascript" src="JS/setting.js"></script>
+     </head>
+<body>
+
+<h1>SVG on Image example</h1>
+
+<svg id ="svg01" width="500" height="500">
+ <image x="0" y="0" width="500" height="500" xlink:href="https://59.126.145.136:53443/SkinlesionManagement/Image/1854/ef506936-76ea-457a-a3c6-564f6e12c9e7.png"></image>
+ <rect x="100" y="157" width="200" height="120" stroke="red" stroke-width="2" fill="none"/></svg>
+ <button onclick="postObsSVGannotation()">Upload Observation (annotation)</button> <button onclick="postBunAnnotation">Upload bundle annotation</button>
+<script>
+    function postObsSVGannotation(){
+        var svg = document.getElementById("svg01");
+        var svgstring = document.getElementById("svg01").outerHTML;
+        var imageurl = svg.getElementsByTagName("image")[0].href.baseVal;
+        var base64 = btoa(svgstring);
+        annotationObservation.component[0].valueAttachment.data = base64;
+        annotationObservation.component[1].valueAttachment.url = imageurl;
+        // 把JSON上傳到FHIR伺服器
+      postData(annotationObservation,"Observation")
+    }
+    function postBunAnnotation(){
+
+    }
+    // 上傳資料到FHIR伺服器涵式
+    function postData(jsonString, type) {
+        var xhttp = new XMLHttpRequest();
+        var url = fhirUrl +"/"+type;
+        xhttp.open("POST", url, false);
+        xhttp.setRequestHeader("Content-type", 'application/json+fhir');
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) // && this.status == 201) 
+            {
+                ret = JSON.parse(this.responseText);
+                alert(this.responseText);
+            }
+        };
+        var data = JSON.stringify(jsonString);
+        xhttp.send(data);
+    }
+</script>
+
+
+</body>
+</html>
